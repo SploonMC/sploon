@@ -1,11 +1,11 @@
 package io.github.sploonmc.sploon.ext
 
+import io.github.sploonmc.sploon.SPLOON_NAME
 import io.github.sploonmc.sploon.minecraft.MappingType
 import io.github.sploonmc.sploon.minecraft.MinecraftVersion
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.problems.ProblemReporter
 import org.gradle.api.problems.Severity
-import java.io.File
 
 abstract class SploonDependenciesExt(
     private val dependencies: DependencyHandler,
@@ -25,11 +25,9 @@ abstract class SploonDependenciesExt(
             problemReporter.reportInvalidVersion(string)
             return
         }
-
-        println("adding spigot for mc $mcVersion")
     }
 
-    fun minecraft(version: Any, mapping: MappingType?) {
+    fun minecraft(version: Any, mapping: MappingType = MappingType.Mojang) {
         val string = version.toString()
         val mcVersion = MinecraftVersion.fromString(string) ?: run {
             problemReporter.reportInvalidVersion(string)
@@ -40,17 +38,18 @@ abstract class SploonDependenciesExt(
             return
         }
 
-        val finalMapping = mapping ?: MappingType.Mojang
-        println("adding mc internals and spigot for mc $mcVersion with mappings ${finalMapping::class.simpleName}")
+        println("adding mc internals and spigot for mc $mcVersion with mappings ${mapping::class.simpleName}")
     }
 
     private fun ProblemReporter.reportInvalidVersion(input: String) {
         throwing { spec ->
             spec
-                .id("sploon", "Invalid Minecraft version")
+                .id(SPLOON_NAME, "Invalid Minecraft version")
                 .severity(Severity.ERROR)
+                .contextualLabel("invalid minecraft version")
                 .solution("Please enter a valid Minecraft version, such as 1.21.3. Has Spigot updated yet?")
                 .withException(MinecraftVersion.InvalidMinecraftVersion(input))
+                .details("The given Minecraft version is invalid and could not be found on Spigot.")
         }
     }
 }

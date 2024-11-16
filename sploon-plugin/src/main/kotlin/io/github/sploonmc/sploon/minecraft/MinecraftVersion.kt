@@ -21,7 +21,7 @@ data class MinecraftVersion(val major: Int, val minor: Int, val rev: Int) {
             return 21
         }
 
-    class InvalidMinecraftVersion(val input: String) : RuntimeException("Invalid Minecraft version: $input\nHas Spigot updated yet?")
+    class InvalidMinecraftVersion(input: String) : RuntimeException("Invalid Minecraft version: $input - Has Spigot updated yet?")
 
     companion object {
         fun fromString(input: String) = runCatching {
@@ -32,6 +32,7 @@ data class MinecraftVersion(val major: Int, val minor: Int, val rev: Int) {
         private fun getVersions(): List<MinecraftVersion> {
             val uri = URI("https://hub.spigotmc.org/versions/")
             val versionPattern = Pattern.compile("([0-9]+\\.[0-9]+\\.[0-9]+|[0-9]+\\.[0-9]+)")
+
             val response = HttpClient.newHttpClient().send(
                 HttpRequest.newBuilder()
                     .uri(uri)
@@ -39,6 +40,7 @@ data class MinecraftVersion(val major: Int, val minor: Int, val rev: Int) {
                     .build(),
                 HttpResponse.BodyHandlers.ofString()
             ).body()
+
             val matcher = versionPattern.matcher(response)
 
             return buildList {

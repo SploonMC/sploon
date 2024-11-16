@@ -10,10 +10,8 @@ import javax.inject.Inject
 
 abstract class SploonPlugin @Inject constructor(val problems: Problems) : Plugin<Project> {
     override fun apply(target: Project) {
-        val reporter: ProblemReporter = problems.forNamespace("sploon")
+        val reporter: ProblemReporter = problems.forNamespace(SPLOON_NAME)
 
         target.dependencies.extensions.create(SPLOON_NAME, SploonDependenciesExt::class.java, target.dependencies, reporter)
-
-        println(MinecraftVersion.VERSIONS.joinToString())
     }
 }
