@@ -1,3 +1,6 @@
+import io.github.sploonmc.sploon.ext.SploonDependenciesExt
+import io.github.sploonmc.sploon.minecraft.MappingType
+
 plugins {
     kotlin("jvm")
     id("sploon")
@@ -13,5 +16,6 @@ repositories {
 }
 
 dependencies {
-    sploon.spigot("1.21.33")
+    sploon.spigot("1.21.3")
+    sploon.minecraft("1.21.3", MappingType.Mojang)
 }
