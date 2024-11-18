@@ -49,11 +49,7 @@ abstract class SploonDependenciesExt(
 
         val patcher = Patcher(mcVersion, gradle)
         patcher.download()
-        println("Patcher downloaded")
-
         if (!patcher.isCached) patcher.patch()
-
-        println("Patcher finished")
 
         dependencies.add("compileOnly", dependencies.create(project.files(patcher.spigotJar.toFile())))
     }
