@@ -3,14 +3,21 @@ package io.github.sploonmc.sploon.ext
 import io.github.sploonmc.sploon.SPLOON_NAME
 import io.github.sploonmc.sploon.minecraft.MappingType
 import io.github.sploonmc.sploon.minecraft.MinecraftVersion
+import io.github.sploonmc.sploon.patcher.Patcher
+import org.gradle.api.Project
 import org.gradle.api.artifacts.dsl.DependencyHandler
+import org.gradle.api.internal.artifacts.dependencies.DefaultFileCollectionDependency
+import org.gradle.api.invocation.Gradle
 import org.gradle.api.problems.ProblemReporter
 import org.gradle.api.problems.Severity
 
 abstract class SploonDependenciesExt(
-    private val dependencies: DependencyHandler,
+    private val project: Project,
     private val problemReporter: ProblemReporter,
 ) {
+    val dependencies = project.dependencies
+    val gradle = project.gradle
+
     /**
      * Adds the Spigot API dependency. This does not include CraftBukkit internals or Minecraft code (often referred to as NMS)
      * @param version The version of minecraft to download the Spigot API for.
@@ -21,7 +28,8 @@ abstract class SploonDependenciesExt(
             problemReporter.reportInvalidVersion(string)
             return
         }
-        if (mcVersion !in MinecraftVersion.VERSIONS) {
+
+        if (!MinecraftVersion.validateVersion(mcVersion)) {
             problemReporter.reportInvalidVersion(string)
             return
         }
@@ -33,12 +41,21 @@ abstract class SploonDependenciesExt(
             problemReporter.reportInvalidVersion(string)
             return
         }
-        if (mcVersion !in MinecraftVersion.VERSIONS) {
+
+        if (!MinecraftVersion.validateVersion(mcVersion)) {
             problemReporter.reportInvalidVersion(string)
             return
         }
 
-        println("adding mc internals and spigot for mc $mcVersion with mappings ${mapping::class.simpleName}")
+        val patcher = Patcher(mcVersion, gradle)
+        patcher.download()
+        println("Patcher downloaded")
+
+        if (!patcher.spigotHashMatches) patcher.patch()
+
+        println("Patcher finished")
+
+        dependencies.add("compileOnly", dependencies.create(project.files(patcher.spigotJar.toFile())))
     }
 
     private fun ProblemReporter.reportInvalidVersion(input: String) {
@@ -48,7 +65,7 @@ abstract class SploonDependenciesExt(
                 .severity(Severity.ERROR)
                 .contextualLabel("invalid minecraft version")
                 .solution("Please enter a valid Minecraft version, such as 1.21.3. Has Spigot updated yet?")
-                .withException(MinecraftVersion.InvalidMinecraftVersion(input))
+                .withException(MinecraftVersion.InvalidMinecraftVersionException(input))
                 .details("The given Minecraft version is invalid and could not be found on Spigot.")
         }
     }

@@ -1,9 +1,8 @@
 package io.github.sploonmc.sploon.minecraft
 
+import io.github.sploonmc.sploon.getUri
+import io.github.sploonmc.sploon.patcher.Patcher
 import java.net.URI
-import java.net.http.HttpClient
-import java.net.http.HttpRequest
-import java.net.http.HttpResponse
 import java.util.regex.Pattern
 
 data class MinecraftVersion(val major: Int, val minor: Int, val rev: Int) {
@@ -21,7 +20,7 @@ data class MinecraftVersion(val major: Int, val minor: Int, val rev: Int) {
             return 21
         }
 
-    class InvalidMinecraftVersion(input: String) : RuntimeException("Invalid Minecraft version: $input - Has Spigot updated yet?")
+    class InvalidMinecraftVersionException(input: String) : RuntimeException("Invalid Minecraft version: $input - Has Spigot updated yet?")
 
     companion object {
         fun fromString(input: String) = runCatching {
@@ -29,27 +28,6 @@ data class MinecraftVersion(val major: Int, val minor: Int, val rev: Int) {
             MinecraftVersion(numbers.getOrNull(0) ?: 0, numbers.getOrNull(1) ?: 0, numbers.getOrNull(2) ?: 0)
         }.getOrNull()
 
-        private fun getVersions(): List<MinecraftVersion> {
-            val uri = URI("https://hub.spigotmc.org/versions/")
-            val versionPattern = Pattern.compile("([0-9]+\\.[0-9]+\\.[0-9]+|[0-9]+\\.[0-9]+)")
-
-            val response = HttpClient.newHttpClient().send(
-                HttpRequest.newBuilder()
-                    .uri(uri)
-                    .GET()
-                    .build(),
-                HttpResponse.BodyHandlers.ofString()
-            ).body()
-
-            val matcher = versionPattern.matcher(response)
-
-            return buildList {
-                while (matcher.find()) {
-                    fromString(matcher.group())?.let(::add)
-                }
-            }
-        }
-
-        val VERSIONS = getVersions().toSet()
+        fun validateVersion(version: MinecraftVersion) = runCatching { getUri(URI("${Patcher.PATCH_REPO_BASE_URL}/$version.json")) }.isSuccess
     }
 }
