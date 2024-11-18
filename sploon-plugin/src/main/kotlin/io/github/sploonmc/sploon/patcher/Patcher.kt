@@ -13,8 +13,10 @@ import io.sigpipe.jbsdiff.Patch
 import org.gradle.api.invocation.Gradle
 import java.net.URI
 import java.util.jar.JarFile
+import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.Path
 import kotlin.io.path.deleteIfExists
+import kotlin.io.path.deleteRecursively
 import kotlin.io.path.exists
 import kotlin.io.path.outputStream
 import kotlin.io.path.readBytes
@@ -43,13 +45,17 @@ class Patcher(val version: MinecraftVersion, gradle: Gradle) {
         if (!patchHashMatches) downloadUri(URI("$PATCH_REPO_BASE_URL/$version.patch"), patch)
     }
 
+    @OptIn(ExperimentalPathApi::class)
     fun patch() {
         val vanillaJarArchive = JarFile(vanillaJar.toFile())
         val needsExtraction = vanillaJarArchive.getJarEntry(JAR_VERSIONS_PATH) != null
         val extractedVanillaJar = if (needsExtraction) {
             println("Vanilla jar needs extracting")
             val vanillaJarExtractionPath = cacheDir.resolve("vanilla/extracted/$version")
-            vanillaJarExtractionPath.deleteIfExists()
+            if (vanillaJarExtractionPath.exists()) {
+                vanillaJarExtractionPath.deleteRecursively()
+            }
+
             vanillaJarExtractionPath.toFile().mkdirs()
 
             extractJar(vanillaJar, vanillaJarExtractionPath)

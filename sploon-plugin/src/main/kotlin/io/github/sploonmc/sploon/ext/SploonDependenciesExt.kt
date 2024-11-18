@@ -51,7 +51,7 @@ abstract class SploonDependenciesExt(
         patcher.download()
         println("Patcher downloaded")
 
-        if (!patcher.spigotHashMatches) patcher.patch()
+        if (!patcher.isCached) patcher.patch()
 
         println("Patcher finished")
 
