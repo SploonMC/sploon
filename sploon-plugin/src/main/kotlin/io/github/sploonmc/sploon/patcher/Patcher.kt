@@ -2,13 +2,14 @@ package io.github.sploonmc.sploon.patcher
 
 import io.github.sploonmc.sploon.JAR_VERSIONS_PATH
 import io.github.sploonmc.sploon.JSON
+import io.github.sploonmc.sploon.compileOnly
 import io.github.sploonmc.sploon.downloadUri
 import io.github.sploonmc.sploon.extractJar
 import io.github.sploonmc.sploon.getUri
 import io.github.sploonmc.sploon.minecraft.MinecraftVersion
 import io.github.sploonmc.sploon.sha1
 import io.sigpipe.jbsdiff.Patch
-import org.gradle.api.invocation.Gradle
+import org.gradle.api.Project
 import java.net.URI
 import java.util.jar.JarFile
 import kotlin.io.path.ExperimentalPathApi
@@ -19,16 +20,21 @@ import kotlin.io.path.outputStream
 import kotlin.io.path.readBytes
 import kotlin.io.path.readText
 
-class Patcher(val version: MinecraftVersion, gradle: Gradle) {
-    val cacheDir = Path(gradle.gradleUserHomeDir.path, "caches/sploon")
+class Patcher(val project: Project, val version: MinecraftVersion) {
+    val cacheDir = Path(project.gradle.gradleUserHomeDir.path, "caches/sploon")
     val patchedMeta = JSON.decodeFromString<PatchedVersionMeta>(getUri(URI("$PATCH_REPO_BASE_URL/$version.json")))
+
     val vanillaJar = cacheDir.resolve("vanilla/$version.jar")
     val patch = cacheDir.resolve("patches/$version.patch")
     val spigotJar = cacheDir.resolve("spigot/$version.jar")
+
     val vanillaHashMatches = if (vanillaJar.exists()) vanillaJar.sha1() == patchedMeta.vanillaJarHash else false
     val patchHashMatches = if (patch.exists()) patch.sha1() == patchedMeta.patchHash else false
     val spigotHashMatches = if (spigotJar.exists()) spigotJar.sha1() == patchedMeta.patchedJarHash else false // TODO: this will break with remapping
+
     val isCached = vanillaHashMatches && patchHashMatches && spigotHashMatches
+
+    val librariesFile = cacheDir.resolve("libs/$version.libs")
 
     fun download() {
         if (spigotHashMatches) return
@@ -36,11 +42,19 @@ class Patcher(val version: MinecraftVersion, gradle: Gradle) {
         vanillaJar.toFile().parentFile.mkdirs()
         patch.toFile().parentFile.mkdirs()
         spigotJar.toFile().parentFile.mkdirs()
+        librariesFile.toFile().parentFile.mkdirs()
 
         if (!vanillaHashMatches) downloadUri(URI(patchedMeta.vanillaDownloadUrl), vanillaJar)
         if (!patchHashMatches) downloadUri(URI("$PATCH_REPO_BASE_URL/$version.patch"), patch)
+        if (!librariesFile.exists()) downloadUri(URI("$PATCH_REPO_BASE_URL/$version.libs"), librariesFile)
 
         println("Patcher downloaded")
+    }
+
+    fun installLibraries() {
+        val libs = librariesFile.readText().lines().filter(String::isNotBlank)
+
+        libs.forEach(project::compileOnly)
     }
 
     @OptIn(ExperimentalPathApi::class)

@@ -1,8 +1,6 @@
 package io.github.sploonmc.sploon
 
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonNamingStrategy
 import org.gradle.api.Project
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -13,12 +11,10 @@ import java.net.http.HttpResponse
 import java.nio.file.Files
 import java.nio.file.Path
 import java.security.MessageDigest
-import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import kotlin.io.path.readBytes
 
 private val HTTP_CLIENT = HttpClient.newHttpClient()
-
 val JSON = Json {
     ignoreUnknownKeys = true
 }
@@ -55,13 +51,18 @@ fun Path.sha1() = readBytes()
         MessageDigest.getInstance("SHA-1").digest(it.readBytes())
     }.joinToString("") { "%02x".format(it) }
 
-fun Project.repoIfNotExists(repoName: String, uri: URI) {
-    if (repositories.any { it.name == repoName }) return
-
-    repositories.maven { repo ->
-        repo.name = repoName
-        repo.url = uri
+fun Project.repos(vararg uris: String) {
+    repositories.apply {
+        uris.forEach { uri ->
+            maven { repo ->
+                repo.url = URI(uri)
+            }
+        }
     }
+}
+
+fun Project.compileOnly(dependencyNotation: Any) {
+    dependencies.add("compileOnly", dependencies.create(dependencyNotation))
 }
 
 fun extractJar(jarFile: Path, outputDirectory: Path) {
@@ -90,3 +91,4 @@ fun extractJar(jarFile: Path, outputDirectory: Path) {
         }
     }
 }
+

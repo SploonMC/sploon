@@ -1,13 +1,9 @@
-package io.github.sploonmc.sploon.ext
+package io.github.sploonmc.sploon.dependency
 
 import io.github.sploonmc.sploon.SPLOON_NAME
 import io.github.sploonmc.sploon.minecraft.MappingType
 import io.github.sploonmc.sploon.minecraft.MinecraftVersion
-import io.github.sploonmc.sploon.patcher.Patcher
 import org.gradle.api.Project
-import org.gradle.api.artifacts.dsl.DependencyHandler
-import org.gradle.api.internal.artifacts.dependencies.DefaultFileCollectionDependency
-import org.gradle.api.invocation.Gradle
 import org.gradle.api.problems.ProblemReporter
 import org.gradle.api.problems.Severity
 
@@ -22,36 +18,42 @@ abstract class SploonDependenciesExt(
      * Adds the Spigot API dependency. This does not include CraftBukkit internals or Minecraft code (often referred to as NMS)
      * @param version The version of minecraft to download the Spigot API for.
      */
-    fun spigot(version: Any) {
-        val string = version.toString()
-        val mcVersion = MinecraftVersion.fromString(string) ?: run {
-            problemReporter.reportInvalidVersion(string)
+    fun spigot(version: String) {
+        val mcVersion = MinecraftVersion.parse(version) ?: run {
+            problemReporter.reportInvalidVersion(version)
             return
         }
 
         if (!MinecraftVersion.validateVersion(mcVersion)) {
-            problemReporter.reportInvalidVersion(string)
+            problemReporter.reportInvalidVersion(version)
             return
         }
+
+        SploonDependencies.handleSpigot(project, mcVersion)
     }
 
-    fun minecraft(version: Any, mapping: MappingType = MappingType.Mojang) {
-        val string = version.toString()
-        val mcVersion = MinecraftVersion.fromString(string) ?: run {
-            problemReporter.reportInvalidVersion(string)
+    /**
+     * Adds the Minecraft Server along with CraftBukkit internals and the Spigot API.
+     *
+     * @param version The version of minecraft.
+     * @param mapping The mappings to be used for internals. Defaults to Mojang.
+     */
+    fun minecraft(version: String, mapping: MappingType = MappingType.Mojang) {
+        val mcVersion = MinecraftVersion.parse(version) ?: run {
+            problemReporter.reportInvalidVersion(version)
             return
         }
 
         if (!MinecraftVersion.validateVersion(mcVersion)) {
-            problemReporter.reportInvalidVersion(string)
+            problemReporter.reportInvalidVersion(version)
             return
         }
 
-        val patcher = Patcher(mcVersion, gradle)
-        patcher.download()
-        if (!patcher.isCached) patcher.patch()
-
-        dependencies.add("compileOnly", dependencies.create(project.files(patcher.spigotJar.toFile())))
+        SploonDependencies.handleMinecraft(
+            project,
+            mcVersion,
+            mapping
+        )
     }
 
     private fun ProblemReporter.reportInvalidVersion(input: String) {

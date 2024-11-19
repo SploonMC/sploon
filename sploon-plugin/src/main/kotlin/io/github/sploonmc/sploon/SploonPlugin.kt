@@ -1,7 +1,6 @@
 package io.github.sploonmc.sploon
 
-import io.github.sploonmc.sploon.ext.SploonDependenciesExt
-import io.github.sploonmc.sploon.piston.getPistonVersions
+import io.github.sploonmc.sploon.dependency.SploonDependenciesExt
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.problems.ProblemReporter
@@ -12,10 +11,8 @@ abstract class SploonPlugin @Inject constructor(val problems: Problems) : Plugin
     override fun apply(project: Project) {
         val reporter: ProblemReporter = problems.forNamespace(SPLOON_NAME)
 
-        project.dependencies.extensions.create("sploon", SploonDependenciesExt::class.java, project, reporter)
-    }
+        project.dependencies.extensions.create(SPLOON_NAME, SploonDependenciesExt::class.java, project, reporter)
 
-    companion object {
-        val PISTON_VERSIONS = getPistonVersions()
+        project.repos(MAVEN_CENTRAL_REPO_URL, SPIGOT_REPO_URL, SONATYPE_OSS_SNAPSHOTS_URL, SONATYPE_OSS_CENTRAL_URL, MINECRAFT_REPO_URL)
     }
 }

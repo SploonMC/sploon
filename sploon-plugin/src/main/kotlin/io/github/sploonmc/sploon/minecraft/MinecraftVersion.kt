@@ -3,7 +3,6 @@ package io.github.sploonmc.sploon.minecraft
 import io.github.sploonmc.sploon.getUri
 import io.github.sploonmc.sploon.patcher.Patcher
 import java.net.URI
-import java.util.regex.Pattern
 
 data class MinecraftVersion(val major: Int, val minor: Int, val rev: Int) {
     override fun toString() = buildString {
@@ -23,7 +22,7 @@ data class MinecraftVersion(val major: Int, val minor: Int, val rev: Int) {
     class InvalidMinecraftVersionException(input: String) : RuntimeException("Invalid Minecraft version: $input - Has Spigot updated yet?")
 
     companion object {
-        fun fromString(input: String) = runCatching {
+        fun parse(input: String) = runCatching {
             val numbers = input.split(".").map(String::toInt)
             MinecraftVersion(numbers.getOrNull(0) ?: 0, numbers.getOrNull(1) ?: 0, numbers.getOrNull(2) ?: 0)
         }.getOrNull()
