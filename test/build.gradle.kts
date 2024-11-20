@@ -5,10 +5,6 @@ plugins {
     id("io.github.sploonmc.sploon")
 }
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     sploon.minecraft("1.21.3", MappingType.Mojang)
 }

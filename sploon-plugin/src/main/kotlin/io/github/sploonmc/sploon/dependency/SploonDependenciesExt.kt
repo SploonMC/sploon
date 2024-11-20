@@ -1,6 +1,7 @@
 package io.github.sploonmc.sploon.dependency
 
 import io.github.sploonmc.sploon.SPLOON_NAME
+import io.github.sploonmc.sploon.bundling.SploonBundling
 import io.github.sploonmc.sploon.minecraft.MappingType
 import io.github.sploonmc.sploon.minecraft.MinecraftVersion
 import org.gradle.api.Project
@@ -11,9 +12,6 @@ abstract class SploonDependenciesExt(
     private val project: Project,
     private val problemReporter: ProblemReporter,
 ) {
-    val dependencies = project.dependencies
-    val gradle = project.gradle
-
     /**
      * Adds the Spigot API dependency. This does not include CraftBukkit internals or Minecraft code (often referred to as NMS)
      * @param version The version of minecraft to download the Spigot API for.
@@ -54,6 +52,14 @@ abstract class SploonDependenciesExt(
             mcVersion,
             mapping
         )
+    }
+
+    fun pluginImplementation(dependencyNotation: Any) {
+        val deps = SploonBundling.download(project, listOf(dependencyNotation))
+        val jarFiles = deps.map { it.first }
+        val dependencies = deps.map { it.first }
+
+        SploonBundling.apply(project, jarFiles)
     }
 
     private fun ProblemReporter.reportInvalidVersion(input: String) {

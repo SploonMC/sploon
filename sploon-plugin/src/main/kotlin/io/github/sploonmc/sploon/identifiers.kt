@@ -1,6 +1,8 @@
 package io.github.sploonmc.sploon
 
 const val SPLOON_NAME = "sploon"
+const val SPLOON_BUNDLE_DEPENDENCIES_TASK = "copySploonBundleDependencies"
+const val SPLOON_BUNDLED_RESOURCES_DIRECTORY = "sploon-bundled"
 
 const val JAR_VERSIONS_PATH = "META-INF/versions/"
 
