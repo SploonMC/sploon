@@ -39,3 +39,17 @@ dependencies {
     implementation("io.sigpipe:jbsdiff:1.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
 }
+
+publishing {
+    repositories {
+        maven {
+            name = "sploon"
+            url = uri("https://maven.radsteve.net/sploon")
+
+            credentials {
+                username = System.getenv("SPLOON_MAVEN_USER")
+                password = System.getenv("SPLOON_MAVEN_TOKEN")
+            }
+        }
+    }
+}
