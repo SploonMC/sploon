@@ -2,13 +2,8 @@ import io.github.sploonmc.sploon.minecraft.MappingType
 
 plugins {
     kotlin("jvm")
-    id("sploon")
+    id("io.github.sploonmc.sploon")
 }
-
-fun prop(prop: String) = project.rootProject.property(prop) as String
-
-group = prop("group")
-version = prop("version")
 
 repositories {
     mavenCentral()

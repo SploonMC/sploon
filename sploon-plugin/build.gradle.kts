@@ -2,19 +2,28 @@ plugins {
     kotlin("jvm") version "2.0.20"
     kotlin("plugin.serialization") version "2.0.20"
     id("com.gradleup.shadow") version "8.3.5"
+    id("com.gradle.plugin-publish") version "1.2.1"
     `java-gradle-plugin`
 }
 
-fun prop(prop: String) = project.rootProject.property(prop) as String
+// Need to have these set to compile-time constants
+// because the gradle publishing plugin does not like
+// using properties or something.
+group = "io.github.sploonmc"
+version = "0.1.0"
 
-group = prop("group")
-version = prop("version")
+tasks.shadowJar {
+    archiveClassifier = ""
+}
 
 gradlePlugin {
+    vcsUrl = "https://github.com/SploonMC/Sploon.git"
+    website = "https://github.com/SploonMC/Sploon"
+
     plugins {
         create("sploon") {
-            id = "sploon"
-            implementationClass = "io.github.sploonmc.sploon.SploonPlugin"
+            id = "io.github.sploonmc.sploon"
+            implementationClass = "$id.SploonPlugin"
             displayName = "SploonMC"
             description = "A gradle plugin making Minecraft development easier"
             tags = setOf("minecraft")
