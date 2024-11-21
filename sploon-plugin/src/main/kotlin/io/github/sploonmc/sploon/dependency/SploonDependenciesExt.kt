@@ -2,11 +2,13 @@ package io.github.sploonmc.sploon.dependency
 
 import io.github.sploonmc.sploon.SPLOON_NAME
 import io.github.sploonmc.sploon.bundling.SploonBundling
+import io.github.sploonmc.sploon.compileOnly
 import io.github.sploonmc.sploon.minecraft.MappingType
 import io.github.sploonmc.sploon.minecraft.MinecraftVersion
 import org.gradle.api.Project
 import org.gradle.api.problems.ProblemReporter
 import org.gradle.api.problems.Severity
+import java.io.File
 
 abstract class SploonDependenciesExt(
     private val project: Project,
@@ -57,9 +59,10 @@ abstract class SploonDependenciesExt(
     fun pluginImplementation(dependencyNotation: Any) {
         val deps = SploonBundling.download(project, listOf(dependencyNotation))
         val jarFiles = deps.map { it.first }
-        val dependencies = deps.map { it.first }
 
-        SploonBundling.apply(project, jarFiles)
+        project.compileOnly(dependencyNotation)
+
+        SploonBundling.apply(project, jarFiles.filter(File::isFile))
     }
 
     private fun ProblemReporter.reportInvalidVersion(input: String) {

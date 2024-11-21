@@ -1,6 +1,7 @@
 package io.github.sploonmc.sploon
 
 import io.github.sploonmc.sploon.dependency.SploonDependenciesExt
+import io.github.sploonmc.sploon.project.SploonProjectSetup
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.problems.ProblemReporter
@@ -14,5 +15,7 @@ abstract class SploonPlugin @Inject constructor(val problems: Problems) : Plugin
         project.dependencies.extensions.create(SPLOON_NAME, SploonDependenciesExt::class.java, project, reporter)
 
         project.repos(MAVEN_CENTRAL_REPO_URL, SPIGOT_REPO_URL, SONATYPE_OSS_SNAPSHOTS_URL, SONATYPE_OSS_CENTRAL_URL, MINECRAFT_REPO_URL)
+
+        SploonProjectSetup.applyShadow(project)
     }
 }
