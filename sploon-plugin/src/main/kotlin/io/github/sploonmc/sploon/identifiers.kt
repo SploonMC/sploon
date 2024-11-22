@@ -4,6 +4,8 @@ const val SPLOON_NAME = "sploon"
 const val SPLOON_BUNDLE_DEPENDENCIES_TASK = "copySploonBundleDependencies"
 const val SPLOON_BUNDLED_RESOURCES_DIRECTORY = "META-INF/sploon-jij"
 
+const val JAR_IN_JAR_FILE_EXTENSION = ".jjar"
+
 const val JAR_VERSIONS_PATH = "META-INF/versions/"
 
 const val SPIGOT_REPO_URL = "https://hub.spigotmc.org/nexus/content/repositories/snapshots"

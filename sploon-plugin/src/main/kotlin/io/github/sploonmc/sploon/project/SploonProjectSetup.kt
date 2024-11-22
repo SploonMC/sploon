@@ -11,5 +11,7 @@ object SploonProjectSetup {
         if (isApplied) return
 
         project.plugins.apply(ShadowPlugin::class.java)
+
+        project.tasks.findByPath("assemble")?.dependsOn("shadowJar")
     }
 }
