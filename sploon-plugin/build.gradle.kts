@@ -39,6 +39,7 @@ dependencies {
     implementation("io.sigpipe:jbsdiff:1.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
     implementation("com.gradleup.shadow:shadow-gradle-plugin:8.3.5")
+    implementation("net.fabricmc:mapping-io:0.6.1")
 }
 
 publishing {

@@ -1,9 +1,8 @@
-import io.github.sploonmc.sploon.minecraft.MappingType
+import io.github.sploonmc.sploon.mapping.MappingType
 
 plugins {
     id("java")
     id("io.github.sploonmc.sploon")
-    id("com.gradleup.shadow") version "8.3.5"
 }
 
 dependencies {

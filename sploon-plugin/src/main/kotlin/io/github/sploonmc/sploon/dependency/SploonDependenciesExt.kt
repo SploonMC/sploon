@@ -3,7 +3,9 @@ package io.github.sploonmc.sploon.dependency
 import io.github.sploonmc.sploon.SPLOON_NAME
 import io.github.sploonmc.sploon.bundling.SploonBundling
 import io.github.sploonmc.sploon.compileOnly
-import io.github.sploonmc.sploon.minecraft.MappingType
+import io.github.sploonmc.sploon.mapping.MappingType
+import io.github.sploonmc.sploon.mapping.format.MappingFormat
+import io.github.sploonmc.sploon.mapping.provider.MappingProvider
 import io.github.sploonmc.sploon.minecraft.MinecraftVersion
 import org.gradle.api.Project
 import org.gradle.api.problems.ProblemReporter
@@ -33,12 +35,19 @@ abstract class SploonDependenciesExt(
     }
 
     /**
+     * Adds the Minecraft Server along with CraftBukkit internals and the Spigot API. Mojang-mapped.
+     *
+     * @param version The version of minecraft.
+     */
+    fun minecraft(version: String) = minecraft(version, MappingType.Mojang)
+
+    /**
      * Adds the Minecraft Server along with CraftBukkit internals and the Spigot API.
      *
      * @param version The version of minecraft.
      * @param mapping The mappings to be used for internals. Defaults to Mojang.
      */
-    fun minecraft(version: String, mapping: MappingType = MappingType.Mojang) {
+    fun <P : MappingProvider<MappingType<P, F>, F>, F : MappingFormat<F>> minecraft(version: String, mapping: MappingType<P, F>) {
         val mcVersion = MinecraftVersion.parse(version) ?: run {
             problemReporter.reportInvalidVersion(version)
             return

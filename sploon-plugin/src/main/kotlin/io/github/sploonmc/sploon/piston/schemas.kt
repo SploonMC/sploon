@@ -1,5 +1,6 @@
 package io.github.sploonmc.sploon.piston
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -20,7 +21,8 @@ data class PistonVersionDownload(
 
 @Serializable
 data class PistonVersionDownloads(
-    val server: PistonVersionDownload
+    val server: PistonVersionDownload,
+    @SerialName("server_mappings") val serverMappings: PistonVersionDownload
 )
 
 @Serializable
