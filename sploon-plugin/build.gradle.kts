@@ -33,6 +33,7 @@ gradlePlugin {
 
 repositories {
     mavenCentral()
+    maven("https://maven.fabricmc.net/")
 }
 
 dependencies {
@@ -40,6 +41,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
     implementation("com.gradleup.shadow:shadow-gradle-plugin:8.3.5")
     implementation("net.fabricmc:mapping-io:0.6.1")
+    implementation("net.fabricmc:tiny-remapper:0.10.4")
 }
 
 publishing {

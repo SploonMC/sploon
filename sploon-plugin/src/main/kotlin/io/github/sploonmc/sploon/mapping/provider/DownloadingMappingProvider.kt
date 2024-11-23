@@ -22,6 +22,9 @@ interface DownloadingMappingProvider<T : MappingType<*>> : MappingProvider<T> {
 
     override fun getMappingFor(project: Project, version: MinecraftVersion, type: T): File {
         val file = getDownloadedFile(project, version, type)
+
+        file.parentFile.mkdirs()
+
         if (file.exists()) return file
 
         downloadUri(getURI(project, version, type), file.toPath())

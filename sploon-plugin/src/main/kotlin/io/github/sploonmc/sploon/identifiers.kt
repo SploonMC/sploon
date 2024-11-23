@@ -13,6 +13,7 @@ const val SONATYPE_OSS_SNAPSHOTS_URL = "https://oss.sonatype.org/content/reposit
 const val SONATYPE_OSS_CENTRAL_URL = "https://oss.sonatype.org/content/repositories/central"
 const val MINECRAFT_REPO_URL = "https://libraries.minecraft.net"
 const val MAVEN_CENTRAL_REPO_URL = "https://repo.maven.apache.org/maven2"
+const val FABRIC_REPO_URL = "https://maven.fabricmc.net/"
 
 const val SHADOW_PLUGIN_ID = "com.gradleup.shadow"
 const val SHADOW_PLUGIN_VERSION = "8.3.5"

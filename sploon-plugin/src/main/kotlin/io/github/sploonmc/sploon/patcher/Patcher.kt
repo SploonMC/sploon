@@ -14,6 +14,7 @@ import java.net.URI
 import java.util.jar.JarFile
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.Path
+import kotlin.io.path.createDirectories
 import kotlin.io.path.deleteRecursively
 import kotlin.io.path.exists
 import kotlin.io.path.outputStream
@@ -39,10 +40,10 @@ class Patcher(val project: Project, val version: MinecraftVersion) {
     fun download() {
         if (spigotHashMatches) return
 
-        vanillaJar.toFile().parentFile.mkdirs()
-        patch.toFile().parentFile.mkdirs()
-        spigotJar.toFile().parentFile.mkdirs()
-        librariesFile.toFile().parentFile.mkdirs()
+        vanillaJar.parent.createDirectories()
+        patch.parent.createDirectories()
+        spigotJar.parent.createDirectories()
+        librariesFile.parent.createDirectories()
 
         if (!vanillaHashMatches) downloadUri(URI(patchedMeta.vanillaDownloadUrl), vanillaJar)
         if (!patchHashMatches) downloadUri(URI("$PATCH_REPO_BASE_URL/$version.patch"), patch)

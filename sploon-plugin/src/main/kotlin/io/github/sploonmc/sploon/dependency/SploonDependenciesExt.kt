@@ -4,7 +4,6 @@ import io.github.sploonmc.sploon.SPLOON_NAME
 import io.github.sploonmc.sploon.bundling.SploonBundling
 import io.github.sploonmc.sploon.compileOnly
 import io.github.sploonmc.sploon.mapping.MappingType
-import io.github.sploonmc.sploon.mapping.format.MappingFormat
 import io.github.sploonmc.sploon.mapping.provider.MappingProvider
 import io.github.sploonmc.sploon.minecraft.MinecraftVersion
 import org.gradle.api.Project
@@ -47,7 +46,7 @@ abstract class SploonDependenciesExt(
      * @param version The version of minecraft.
      * @param mapping The mappings to be used for internals. Defaults to Mojang.
      */
-    fun <P : MappingProvider<MappingType<P, F>, F>, F : MappingFormat<F>> minecraft(version: String, mapping: MappingType<P, F>) {
+    fun <P : MappingProvider<MappingType<P>>> minecraft(version: String, mapping: MappingType<P>) {
         val mcVersion = MinecraftVersion.parse(version) ?: run {
             problemReporter.reportInvalidVersion(version)
             return
@@ -61,7 +60,7 @@ abstract class SploonDependenciesExt(
         SploonDependencies.handleMinecraft(
             project,
             mcVersion,
-            mapping
+            mapping,
         )
     }
 

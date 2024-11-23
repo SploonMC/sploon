@@ -15,7 +15,7 @@ abstract class SploonPlugin @Inject constructor(val problems: Problems) : Plugin
 
         project.dependencies.extensions.create(SPLOON_NAME, SploonDependenciesExt::class.java, project, reporter)
 
-        project.repos(MAVEN_CENTRAL_REPO_URL, SPIGOT_REPO_URL, SONATYPE_OSS_SNAPSHOTS_URL, SONATYPE_OSS_CENTRAL_URL, MINECRAFT_REPO_URL)
+        project.repos(MAVEN_CENTRAL_REPO_URL, SPIGOT_REPO_URL, SONATYPE_OSS_SNAPSHOTS_URL, SONATYPE_OSS_CENTRAL_URL, MINECRAFT_REPO_URL, FABRIC_REPO_URL)
 
         SploonProjectSetup.applyShadow(project)
     }
