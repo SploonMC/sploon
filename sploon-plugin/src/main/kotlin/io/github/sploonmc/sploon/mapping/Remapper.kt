@@ -7,6 +7,7 @@ import net.fabricmc.tinyremapper.TinyRemapper
 import net.fabricmc.tinyremapper.TinyUtils
 import java.nio.file.Path
 import java.util.regex.Pattern
+import kotlin.io.path.exists
 
 class Remapper<P : MappingProvider<MappingType<P>>>(
     val cacheDir: Path,
@@ -29,6 +30,8 @@ class Remapper<P : MappingProvider<MappingType<P>>>(
         .build()
 
     fun remap() {
+        if (output.exists()) return
+
         println("Remapping...")
         OutputConsumerPath.Builder(output).build().use { consumerPath ->
             consumerPath.addNonClassFiles(input)
