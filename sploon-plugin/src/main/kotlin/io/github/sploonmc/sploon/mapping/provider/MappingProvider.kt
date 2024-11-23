@@ -7,7 +7,7 @@ import org.gradle.api.Project
 import java.io.File
 import kotlin.io.path.Path
 
-interface MappingProvider<T : MappingType<*, F>, F : MappingFormat<F>> {
+interface MappingProvider<T : MappingType<*>> {
     fun getMappingFor(project: Project, version: MinecraftVersion, type: T): File
     fun name(): String
 

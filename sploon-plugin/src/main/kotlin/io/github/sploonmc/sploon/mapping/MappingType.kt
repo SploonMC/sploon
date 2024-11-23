@@ -1,30 +1,33 @@
 package io.github.sploonmc.sploon.mapping
 
-import io.github.sploonmc.sploon.mapping.format.MappingFormat
-import io.github.sploonmc.sploon.mapping.format.ProguardMappingFormat
-import io.github.sploonmc.sploon.mapping.format.TinyV2MappingFormat
 import io.github.sploonmc.sploon.mapping.provider.CustomMappingProvider
 import io.github.sploonmc.sploon.mapping.provider.MappingProvider
 import io.github.sploonmc.sploon.mapping.provider.MojangMappingProvider
 import io.github.sploonmc.sploon.mapping.provider.NoopMappingProvider
+import net.fabricmc.mappingio.format.MappingFormat
 import java.io.File
 import kotlin.reflect.full.primaryConstructor
 
-interface MappingType<P : MappingProvider<MappingType<P, F>, F>, F: MappingFormat<F>> {
-    data object Mojang : MappingType<MojangMappingProvider, ProguardMappingFormat>
+interface MappingType<P : MappingProvider<MappingType<P>>> {
+    val format: MappingFormat
+
+    data object Mojang : MappingType<MojangMappingProvider> {
+        override val format = MappingFormat.PROGUARD_FILE
+    }
 
     // TODO
-    data object Intermediary : MappingType<NoopMappingProvider, TinyV2MappingFormat>
+    data object Intermediary : MappingType<NoopMappingProvider> {
+        override val format = MappingFormat.TINY_2_FILE
+    }
+
     // TODO
-    data object Yarn : MappingType<NoopMappingProvider, TinyV2MappingFormat>
+    data object Yarn : MappingType<NoopMappingProvider> {
+        override val format = MappingFormat.TINY_2_FILE
+    }
 
-    data class Custom<F : MappingFormat<F>>(val mappingsFile: File) : MappingType<CustomMappingProvider<F>, F>
+    data class Custom(val mappingsFile: File, override val format: MappingFormat) : MappingType<CustomMappingProvider>
 }
 
-inline fun <reified F : MappingFormat<F>> MappingType<*, F>.newMappingFormat(): F {
-    return (F::class.primaryConstructor ?: error("class ${F::class.simpleName} has no constructor")).call()
-}
-
-inline fun <reified P : MappingProvider<MappingType<P, F>, F>, F : MappingFormat<F>> MappingType<P, F>.newProvider(): P {
+inline fun <reified P : MappingProvider<MappingType<P>>> MappingType<P>.newProvider(): P {
     return (P::class.primaryConstructor ?: error("class ${P::class.simpleName} has no constructor")).call()
 }
