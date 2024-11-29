@@ -51,7 +51,7 @@ object SploonBundling {
     fun configureShadow(project: Project) {
         project.tasks.named("shadowJar", ShadowJar::class.java) { task ->
             task.exclude { file ->
-                val bundledDeps = bundledDependencies.map { it.first }
+                val bundledDeps = bundledDependencies.map(Pair<File, Dependency>::first)
                 val excluded = bundledDeps.any { it.name == file.name }
                 excluded
             }

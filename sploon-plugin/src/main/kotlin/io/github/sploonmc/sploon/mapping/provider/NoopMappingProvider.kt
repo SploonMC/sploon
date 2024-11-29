@@ -5,7 +5,7 @@ import io.github.sploonmc.sploon.minecraft.MinecraftVersion
 import org.gradle.api.Project
 import java.io.File
 
-class NoopMappingProvider : MappingProvider<MappingType<NoopMappingProvider>> {
+object NoopMappingProvider : MappingProvider<MappingType<NoopMappingProvider>> {
     override fun getMappingFor(
         project: Project,
         version: MinecraftVersion,

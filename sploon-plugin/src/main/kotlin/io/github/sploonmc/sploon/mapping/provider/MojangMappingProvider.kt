@@ -7,12 +7,12 @@ import io.github.sploonmc.sploon.piston.getVersionMeta
 import org.gradle.api.Project
 import java.net.URI
 
-class MojangMappingProvider : DownloadingMappingProvider<MappingType<MojangMappingProvider>> {
+object MojangMappingProvider : DownloadingMappingProvider<MappingType<MojangMappingProvider>> {
     override fun getDownloadedFile(
         project: Project,
         version: MinecraftVersion,
         type: MappingType<MojangMappingProvider>
-    ) = cacheDir(project).resolve("$version.proguard").toFile()
+    ) = cacheDir(project).resolve("$version.txt").toFile()
 
     override fun getURI(
         project: Project,

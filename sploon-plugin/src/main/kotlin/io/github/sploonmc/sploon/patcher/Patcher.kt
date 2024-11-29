@@ -14,7 +14,7 @@ import java.net.URI
 import java.util.jar.JarFile
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.Path
-import kotlin.io.path.createDirectories
+import kotlin.io.path.createParentDirectories
 import kotlin.io.path.deleteRecursively
 import kotlin.io.path.exists
 import kotlin.io.path.outputStream
@@ -24,26 +24,22 @@ import kotlin.io.path.readText
 class Patcher(val project: Project, val version: MinecraftVersion) {
     val cacheDir = Path(project.gradle.gradleUserHomeDir.path, "caches/sploon")
     val patchedMeta = JSON.decodeFromString<PatchedVersionMeta>(getUri(URI("$PATCH_REPO_BASE_URL/$version.json")))
-
     val vanillaJar = cacheDir.resolve("vanilla/$version.jar")
     val patch = cacheDir.resolve("patches/$version.patch")
     val spigotJar = cacheDir.resolve("spigot/$version.jar")
-
     val vanillaHashMatches = if (vanillaJar.exists()) vanillaJar.sha1() == patchedMeta.vanillaJarHash else false
     val patchHashMatches = if (patch.exists()) patch.sha1() == patchedMeta.patchHash else false
     val spigotHashMatches = if (spigotJar.exists()) spigotJar.sha1() == patchedMeta.patchedJarHash else false // TODO: this will break with remapping
-
     val isCached = vanillaHashMatches && patchHashMatches && spigotHashMatches
-
     val librariesFile = cacheDir.resolve("libs/$version.libs")
 
     fun download() {
         if (spigotHashMatches) return
 
-        vanillaJar.parent.createDirectories()
-        patch.parent.createDirectories()
-        spigotJar.parent.createDirectories()
-        librariesFile.parent.createDirectories()
+        vanillaJar.createParentDirectories()
+        patch.createParentDirectories()
+        spigotJar.createParentDirectories()
+        librariesFile.createParentDirectories()
 
         if (!vanillaHashMatches) downloadUri(URI(patchedMeta.vanillaDownloadUrl), vanillaJar)
         if (!patchHashMatches) downloadUri(URI("$PATCH_REPO_BASE_URL/$version.patch"), patch)
@@ -61,7 +57,6 @@ class Patcher(val project: Project, val version: MinecraftVersion) {
     @OptIn(ExperimentalPathApi::class)
     fun patch() {
         if (spigotHashMatches) return
-
         val vanillaJarArchive = JarFile(vanillaJar.toFile())
         val needsExtraction = vanillaJarArchive.getJarEntry(JAR_VERSIONS_PATH) != null
         val extractedVanillaJar = if (needsExtraction) {

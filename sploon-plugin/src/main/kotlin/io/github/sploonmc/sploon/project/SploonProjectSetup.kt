@@ -1,6 +1,7 @@
 package io.github.sploonmc.sploon.project
 
 import com.github.jengelman.gradle.plugins.shadow.ShadowPlugin
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import io.github.sploonmc.sploon.SHADOW_PLUGIN_ID
 import org.gradle.api.Project
 
@@ -11,7 +12,11 @@ object SploonProjectSetup {
         if (isApplied) return
 
         project.plugins.apply(ShadowPlugin::class.java)
+        val shadowTask = project.tasks.named("shadowJar", ShadowJar::class.java)
+        shadowTask.configure { task ->
+            task.archiveClassifier.set("")
+        }
 
-        project.tasks.findByPath("assemble")?.dependsOn("shadowJar")
+        project.tasks.findByPath("assemble")?.dependsOn(shadowTask)
     }
 }

@@ -7,6 +7,7 @@ import io.github.sploonmc.sploon.mapping.MappingType
 import io.github.sploonmc.sploon.mapping.provider.MappingProvider
 import io.github.sploonmc.sploon.minecraft.MinecraftVersion
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Dependency
 import org.gradle.api.problems.ProblemReporter
 import org.gradle.api.problems.Severity
 import java.io.File
@@ -66,7 +67,7 @@ abstract class SploonDependenciesExt(
 
     fun pluginImplementation(dependencyNotation: Any) {
         val deps = SploonBundling.download(project, listOf(dependencyNotation))
-        val jarFiles = deps.map { it.first }
+        val jarFiles = deps.map(Pair<File, Dependency>::first)
 
         project.compileOnly(dependencyNotation)
 

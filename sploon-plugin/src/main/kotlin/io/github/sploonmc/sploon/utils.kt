@@ -8,10 +8,12 @@ import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
-import java.nio.file.Files
 import java.nio.file.Path
 import java.security.MessageDigest
 import java.util.zip.ZipInputStream
+import kotlin.io.path.createDirectories
+import kotlin.io.path.createParentDirectories
+import kotlin.io.path.notExists
 import kotlin.io.path.readBytes
 
 private val HTTP_CLIENT = HttpClient.newHttpClient()
@@ -66,8 +68,8 @@ fun Project.compileOnly(dependencyNotation: Any) {
 }
 
 fun extractJar(jarFile: Path, outputDirectory: Path) {
-    if (!Files.exists(outputDirectory)) {
-        Files.createDirectories(outputDirectory)
+    if (outputDirectory.notExists()) {
+        outputDirectory.createDirectories()
     }
 
     FileInputStream(jarFile.toFile()).use { fileStream ->
@@ -77,9 +79,9 @@ fun extractJar(jarFile: Path, outputDirectory: Path) {
                 val outputPath = outputDirectory.resolve(entry.name)
 
                 if (entry.isDirectory) {
-                    Files.createDirectories(outputPath)
+                    outputPath.createDirectories()
                 } else {
-                    Files.createDirectories(outputPath.parent)
+                    outputPath.createParentDirectories()
 
                     FileOutputStream(outputPath.toFile()).use { fileOutStream ->
                         zipStream.copyTo(fileOutStream)

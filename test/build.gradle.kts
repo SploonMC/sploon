@@ -6,6 +6,6 @@ plugins {
 }
 
 dependencies {
-    sploon.minecraft("1.21.3", MappingType.Mojang)
+    sploon.minecraft("1.21.3", MappingType.Spigot)
     sploon.pluginImplementation(files("luckperms.jar"))
 }

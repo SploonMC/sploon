@@ -20,7 +20,6 @@ class Remapper<P : MappingProvider<MappingType<P>>>(
 ) {
     val tinyMapped = IntoTinyRemapper.remap(inputMappingType.format, inputMapping, cacheDir.resolve("tiny-remapped/$minecraftVersion.tiny"))
     val mappingOrder = if (reverse) listOf("source", "target") else listOf("target", "source")
-
     val remapper = TinyRemapper.newRemapper()
         .withMappings(TinyUtils.createTinyMappingProvider(tinyMapped, mappingOrder[0], mappingOrder[1]))
         .withMappings { out -> JSR_TO_JETBRAINS.forEach(out::acceptClass) }
@@ -40,7 +39,7 @@ class Remapper<P : MappingProvider<MappingType<P>>>(
         }
 
         remapper.finish()
-        println("Remapped!")
+        throw RuntimeException("Remapped!")
     }
 
     companion object {
@@ -49,7 +48,6 @@ class Remapper<P : MappingProvider<MappingType<P>>>(
             this["javax/annotation/Nonnull"] = "org/jetbrains/annotations/NotNull"
             this["javax/annotation/concurrent/Immutable"] = "org/jetbrains/annotations/Unmodifiable"
         }
-
         val MC_LV_PATTERN = Pattern.compile("\\$\\$\\d+")
     }
 }

@@ -3,13 +3,14 @@ package io.github.sploonmc.sploon.mapping.provider
 import io.github.sploonmc.sploon.mapping.MappingType
 import io.github.sploonmc.sploon.minecraft.MinecraftVersion
 import org.gradle.api.Project
+import java.io.File
 
-class CustomMappingProvider : MappingProvider<MappingType<CustomMappingProvider>> {
+class CustomMappingProvider(val mappingsFile: File) : MappingProvider<MappingType<CustomMappingProvider>> {
     override fun getMappingFor(
         project: Project,
         version: MinecraftVersion,
         type: MappingType<CustomMappingProvider>
-    ) = (type as MappingType.Custom).mappingsFile
+    ) = mappingsFile
 
-    override fun name() = "custom"
+    override fun name() = mappingsFile.nameWithoutExtension
 }

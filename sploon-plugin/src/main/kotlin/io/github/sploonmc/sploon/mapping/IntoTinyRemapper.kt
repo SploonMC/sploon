@@ -5,7 +5,7 @@ import net.fabricmc.mappingio.MappingWriter
 import net.fabricmc.mappingio.format.MappingFormat
 import net.fabricmc.mappingio.tree.MemoryMappingTree
 import java.nio.file.Path
-import kotlin.io.path.createDirectories
+import kotlin.io.path.createParentDirectories
 
 object IntoTinyRemapper {
     fun remap(inputFormat: MappingFormat, input: Path, output: Path): Path {
@@ -14,7 +14,7 @@ object IntoTinyRemapper {
 
         MappingReader.read(input, inputFormat, tree)
 
-        output.parent.createDirectories()
+        output.createParentDirectories()
 
         tree.accept(MappingWriter.create(output, MappingFormat.TINY_2_FILE))
 
