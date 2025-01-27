@@ -36,7 +36,6 @@ object SpigotMappingProvider : MappingProvider<MappingType<SpigotMappingProvider
         val buildData = BuildData(buildDataDir)
         val commit = getVersionData(version).refs.buildData
 
-        // felix (discord: flx_dc) interrupted me while I was writing this, so fuck his mom for me please
         val commitDir = buildData.extractCommit(commit)
         val buildDataInfo = JSON.decodeFromString<BuildDataInfo>(commitDir.resolve("info.json").readText())
 

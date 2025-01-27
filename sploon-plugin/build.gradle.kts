@@ -34,13 +34,14 @@ gradlePlugin {
 repositories {
     mavenCentral()
     maven("https://maven.fabricmc.net/")
+    maven("https://repo.epicebic.xyz/public")
 }
 
 dependencies {
     implementation("io.sigpipe:jbsdiff:1.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
     implementation("com.gradleup.shadow:shadow-gradle-plugin:8.3.5")
-    implementation("net.fabricmc:mapping-io:0.6.1")
+    implementation("net.fabricmc:mapping-io:0.8.0")
     implementation("net.fabricmc:tiny-remapper:0.10.4")
     implementation("com.github.sya-ri:kgit:1.1.0")
 }
